@@ -32,12 +32,17 @@ const getDeviceByVidAndPid = (vid: number, pid: number) =>
   ).path;
 
 const write = (data: number[]) => {
+  const data_packet: number[] = [];
+  
   // rawhid protocol for windows we must send 0 as first byte then 1 after this we send our data
   if (os.platform() == 'win32') {
-    data.unshift(0x00);
+    data_packet.push(0x00);
   }
+  
+  data_packet.push(0x01);
+  data_packet.push(...data);
 
-  device.write([0x01, ...data]);
+  device.write(data_packet);
 };
 
 const getOS = () => {
